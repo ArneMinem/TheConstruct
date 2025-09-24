@@ -238,7 +238,7 @@ Messages are defined in .msg files, which are located inside a msg directory of 
 
 - std_msgs: standard message types, like Int32, String, Float32, Bool, etc.
 - geometry_msgs: message types for geometric data, like Point, Pose, Twist, etc.
-- sensor_msgs: message types for sensor data, like Image, LaserScan, Imu,
+- sensor_msgs: message types for sensor data, like Image, LaserScan, Imu, etc.
 
 Example of Twist message type:
 
@@ -267,14 +267,46 @@ while not rospy.is_shutdown():
   rate.sleep()
 ```
 
+Create your own message
+
 ### Subscriber
 
 Subscriber example: 
 
 ```
 #! /usr/bin/env python
+
+import rospy                                          
+from std_msgs.msg import Int32 
+
+def callback(msg):                                    # Define a function called 'callback' that receives a parameter 
+                                                      # named 'msg'
+  
+    print (msg.data)                                  # Print the value 'data' inside the 'msg' parameter
+
+rospy.init_node('topic_subscriber')                   # Initiate a Node called 'topic_subscriber'
+
+sub = rospy.Subscriber('/counter', Int32, callback)   # Create a Subscriber object that will listen to the /counter
+                                                      # topic and will cal the 'callback' function each time it reads
+                                                      # something from the topic
+rospy.spin()                                          # Create a loop that will keep the program in execution
 ```
 
+Other example:
+```
+#! /usr/bin/env python
+
+import rospy
+from nav_msgs.msg import Odometry
+
+def callback(msg): 
+print ("Position: x = ", msg.pose.pose.position.x, ", y = ", msg.pose.pose.position.y, ", z = ", msg.pose.pose.position.z)
+print ("Orientation: x = ", msg.pose.pose.orientation.x, ", y = ", msg.pose.pose.orientation.y, ", z = ", msg.pose.pose.orientation.z)
+
+rospy.init_node('topic_subscriber')
+sub = rospy.Subscriber('/odom', Odometry, callback)
+rospy.spin()
+```
 
 ## Param Server 
 
