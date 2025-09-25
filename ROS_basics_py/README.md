@@ -99,7 +99,7 @@ You can then fill in the argument:
 
 `rosservice call /trajectory_by_name "traj_name: 'get_food'"`
 
-#### Service program example
+#### Service client program example
 
 ```
 #! /usr/bin/env python
@@ -145,6 +145,59 @@ Whenever a service message is compiled, three message objects are created:
 - NameOfTheService: This is the object that you will use to create a connection to the service. It is used when you create a ServiceProxy object.
 - NameOfTheServiceRequest: This is the object that you will use to create a variable of the type of the service request. It is used when you want to fill in the arguments that the service request needs.
 - NameOfTheServiceResponse: This is the object that you will use to create a variable of the type of the service response. It is used when you want to fill in the arguments that the service response needs.
+
+**Creating your own service message:**
+
+
+
+#### Service Server example
+
+```
+#! /usr/bin/env python
+
+import rospy
+from std_srvs.srv import Empty, EmptyResponse # you import the service message python classes generated from Empty.srv.
+
+
+def my_callback(request):
+    print("My_callback has been called")
+    return EmptyResponse() # the service Response class, in this case EmptyResponse
+    #return MyServiceResponse(len(request.words.split())) 
+
+rospy.init_node('service_server') 
+my_service = rospy.Service('/my_service', Empty, my_callback) # create the Service called my_service with the defined callback
+rospy.spin() # maintain the service open.
+```
+
+Bigger example to command bb8:
+```
+#! /usr/bin/env python
+
+import rospy
+# you import the service message python classes generated from Empty.srv
+from std_srvs.srv import Empty, EmptyResponse 
+from geometry_msgs.msg import Twist
+
+def my_callback(request):
+    print("My_callback has been called")
+
+    cmd = Twist()
+    cmd.linear.x = 0.5
+    cmd.angular.z = 0.5
+
+    rate = rospy.Rate(2)
+
+    pub.publish(cmd)
+
+    # the service Response class, in this case EmptyResponse
+    return EmptyResponse()
+
+rospy.init_node('bb8_move_in_circle_service_server')
+
+pub = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
+my_service = rospy.Service('/move_bb8_in_circle', Empty, my_callback) # create the Service called move_bb8_in_circle with the defined callback
+rospy.spin() # maintain the service open.
+```
 
 ### Actions
 
