@@ -99,6 +99,30 @@ You can then fill in the argument:
 
 `rosservice call /trajectory_by_name "traj_name: 'get_food'"`
 
+**Careful:**
+
+- `rossrv list`
+
+This shows all service types that are compiled and available in your ROS system.
+Examples:
+
+std_srvs/Empty
+
+my_custom_srv_msg_pkg/MyCustomServiceMessage
+
+These are like class definitions → they describe the format of the request and response messages.
+
+- `rosservice list`
+
+This shows all running service instances (servers) that are currently active.
+Examples:
+
+/gazebo/get_model_state
+
+/my_service
+
+These are like objects created from the class → they exist only when a node advertises them.
+
 #### Service client program example
 
 ```
@@ -148,7 +172,44 @@ Whenever a service message is compiled, three message objects are created:
 
 **Creating your own service message:**
 
+1. Create a srv directory in your package: `mkdir srv`
+2. Create a .srv file in the srv directory: `touch MyService.srv`
+3. Edit the .srv file to define the service structure:
+```
+string words
+---
+int32 number_of_words
+```
 
+4. Modify CMakeLists.txt:
+
+```
+find_package(catkin REQUIRED COMPONENTS
+  rospy
+  std_msgs
+  message_generation
+)
+add_service_files(
+  FILES
+  MyService.srv
+)
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+catkin_package(
+  CATKIN_DEPENDS message_runtime rospy std_msgs
+)
+```
+
+5. Modify package.xml:
+
+Add the following lines:
+```
+<build_depend>message_generation</build_depend>
+<build_export_depend>message_runtime</build_export_depend>
+<exec_depend>message_runtime</exec_depend>
+```
 
 #### Service Server example
 

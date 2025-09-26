@@ -46,7 +46,7 @@ In this course we learn how to use ROS with Python.
 
 `chmod +x <file_name>` to make a file executable
 
-
+`vim <file_name>` to create or edit a file using the vim text editor
 
 
 
