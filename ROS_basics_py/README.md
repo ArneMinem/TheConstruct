@@ -396,6 +396,27 @@ At this point, the action server has received the goal and started to execute it
 
 `client.wait_for_result()`
 
+**Known issue with actions in ROS:** 
+
+here is a known ROS issue with Actions. It issues a warning when the connection is severed. It normally happens when you cancel a goal or you just terminate a program with a client object in it. The warning is given in the Server Side.
+
+`[WARN] Inbound TCP/IP connection failed: connection from sender terminated before handshake header received. 0 bytes were received. Please check sender for additional details.`
+Just don't panic, it has no effect on your program.
+
+**How the actions work:**
+
+So, whenever an action server is called, the sequence of steps are as follows:
+
+1. When an action client calls an action server from a node, what actually happens is that the action client sends to the action server the goal requested through the /ardrone_action_server/goal topic.
+2. When the action server starts to execute the goal, it sends to the action client the feedback through the /ardrone_action_server/feedback topic.
+3. Finally, when the action server has finished the goal, it sends to the action client the result through the /ardrone_action_server/result topic.
+
+** !!! Axclient shortcut !!! **
+
+`rosrun actionlib_tools axclient.py /ardrone_action_server`
+
+This opens a GUI to call the action server, send a goal and see the feedback and result.
+
 ## Visualisation
 
 ### Rviz
