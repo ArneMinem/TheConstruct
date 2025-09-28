@@ -306,6 +306,8 @@ sensor_msgs/CompressedImage[] allPictures # an array containing all the pictures
 sensor_msgs/CompressedImage lastImage  # the last image taken
 ```
 
+#### Action Client
+
 Example of action client:
 
 ```
@@ -416,6 +418,10 @@ So, whenever an action server is called, the sequence of steps are as follows:
 `rosrun actionlib_tools axclient.py /ardrone_action_server`
 
 This opens a GUI to call the action server, send a goal and see the feedback and result.
+
+#### Action Server
+
+You must be aware that the name of the messages (the class) used in the Python code are called `FibonacciGoal`, `FibonacciResult`, and `FibonacciFeedback`, while the name of the messages used in the topics are called `FibonacciActionGoal`, `FibonacciActionResult`, and `FibonacciActionFeedback`.
 
 ## Visualisation
 
