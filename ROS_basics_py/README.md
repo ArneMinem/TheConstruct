@@ -289,7 +289,7 @@ Actions are Asynchronous. It's like launching a new thread. When your ROS progra
 An action is made of 3 parts:
 - Goal: This is the objective of the action. It is sent by the Action Client to the Action Server when calling the action.
 - Result: This is the result of the action. It is sent by the Action Server to the Action Client when the action has finished.
-- Feedback: This is information that the Action Server sends to the Action Client while the action is being performed. It is optional.
+- Feedback: This is information that the Action Server sends to the Action Client while the action is being performed.
 
 Example:
 
@@ -871,3 +871,89 @@ def publish_once_in_cmd_vel(self):
             self.rate.sleep()
 ```
 
+## Debugging
+
+### Logging
+
+Here is a script giving an exemple of how to use rospy logging tools:
+
+```
+#! /usr/bin/env python
+
+import rospy
+import random
+import time
+
+# Options: DEBUG, INFO, WARN, ERROR, FATAL
+rospy.init_node('log_demo', log_level=rospy.DEBUG)
+rate = rospy.Rate(0.5)
+
+#rospy.loginfo_throttle(120, "DeathStars Minute info: "+str(time.time()))
+
+while not rospy.is_shutdown():
+    rospy.logdebug("There is a missing droid")
+    rospy.loginfo("The Emperors Capuchino is done")
+    rospy.logwarn("The Revels are coming time "+str(time.time()))
+    exhaust_number = random.randint(1,100)
+    port_number = random.randint(1,100)
+    rospy.logerr(" The thermal exhaust port %s, right below the main port %s", exhaust_number, port_number)
+    rospy.logfatal("The DeathStar Is EXPLODING")
+    rate.sleep()
+    rospy.logfatal("END")
+```
+
+By changing the log_level in `rospy.init_node('log_demo', log_level=rospy.DEBUG)`, you can filter the messages that are displayed. For example, if you set it to `rospy.WARN`, only warnings, errors, and fatal messages will be shown.
+
+### RQT Console
+
+`rqt_console`
+
+This opens a GUI that displays log messages from ROS nodes. You can filter messages by severity level (DEBUG, INFO, WARN, ERROR, FATAL) and by node name. This is useful for monitoring the behavior of your nodes and diagnosing issues.
+
+### RQT Plot
+
+`rqt_plot`
+
+This opens a GUI that allows you to plot data from ROS topics in real-time. You can enter the topic names you want to plot, and it will display the data as graphs. This is useful for visualizing sensor data, control signals, or any other numerical data being published in your ROS system.
+
+### RQT Graph
+
+`rqt_graph`
+
+This opens a GUI that displays the computational graph of your ROS system. It shows nodes, topics, and services, and how they are interconnected. This is useful for understanding the architecture of your ROS application and for debugging communication issues between nodes.
+
+**Warning:** It's important to point out that it seems to have problems with connections that aren't topics.
+
+### Rosbag
+
+`rosbag record -a`
+
+This command starts recording all topics being published in your ROS system and saves them to a file named `YYYY-MM-DD-HH-MM-SS.bag` in the current directory. You can stop the recording by pressing `Ctrl + C`.
+
+`rosbag record -O name_bag_file.bag name_topic_to_record1 name_topic_to_record2 ... name_topic_to_recordN`
+
+This command starts recording specific topics you specify and saves them to a file named `name_bag_file.bag`. You can list as many topics as you want to record. Again, stop the recording by pressing `Ctrl + C`.
+
+`rosbag info name_bag_file.bag`
+
+This command displays information about the specified bag file, including the topics recorded, the number of messages, the start and end times, and the duration of the recording.
+
+`rosbag play name_bag_file.bag`
+
+This command plays back the data recorded in the specified bag file. It will publish the messages on the same topics they were recorded from, at the same rate they were originally published. This is useful for testing and debugging your ROS nodes with real data.
+
+`rosservice call /gazebo/pause_physics "{}"`
+
+This command calls the `/gazebo/pause_physics` service to pause the physics simulation in Gazebo. The empty braces `{}` indicate that no additional parameters are being passed to the service.
+
+`rosservice call /gazebo/unpause_physics "{}"`
+
+This command calls the `/gazebo/unpause_physics` service to resume the physics simulation in Gazebo. Again, the empty braces `{}` indicate that no additional parameters are being passed to the service.
+
+**IMPORTANT:** When using rosbag play, if you have a simulation running (like Gazebo), it is important to pause the physics before starting the playback. This ensures that the simulation does not continue to run and interfere with the playback of the recorded data. After pausing the physics, you can start the playback of the bag file. Once the playback is finished, you can unpause the physics to resume the simulation.
+
+### Rviz
+
+`rosrun rviz rviz`
+
+This command opens the RViz GUI, which is a powerful visualization tool for ROS. RViz allows you to visualize sensor data, robot models, and other information in a 3D environment. You can add different types of displays to visualize various data types, such as point clouds, images, laser scans, and more. RViz is highly configurable and can be customized to suit your specific needs for visualizing your robot and its environment.
